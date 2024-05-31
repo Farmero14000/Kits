@@ -21,10 +21,6 @@ class KitCommand extends Command {
     }
 
     public function execute(CommandSender $sender, string $label, array $args): bool {
-        if (!$this->testPermission($sender)) {
-            return false;
-        }
-
         if (!$sender instanceof Player) {
             $sender->sendMessage("This command can only be used in-game!");
             return true;
