@@ -10,7 +10,7 @@ use Farmero\kits\KitsManager;
 
 use Farmero\kits\commands\KitCommand;
 
-use Farmero\kits\task\KitCoolDownTask;
+use Farmero\kits\task\KitCooldownTask;
 
 class Kits extends PluginBase {
 
