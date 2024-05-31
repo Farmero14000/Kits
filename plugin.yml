@@ -1,0 +1,8 @@
+name: Kits
+version: 1.0.0
+author: Farmero
+api: 5.0.0
+main: Farmero\kits\Kits
+
+permissions:
+  kits.cmd.kit

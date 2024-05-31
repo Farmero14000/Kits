@@ -1,0 +1,18 @@
+starter:
+  cooldown: 3600
+  items:
+    - id: "iron_sword"
+      count: 1
+      name: "Starter Sword"
+    - id: "cooked_beef"
+      count: 5
+
+vip:
+  cooldown: 7200
+  items:
+    - id: "diamond_sword"
+      count: 1
+      name: "VIP Sword"
+      lore: "A powerful sword for VIPs."
+    - id: "golden_apple"
+      count: 3
