@@ -5,4 +5,5 @@ api: 5.0.0
 main: Farmero\kits\Kits
 
 permissions:
-  kits.cmd.kit
+  kits.cmd.kit:
+    defualt: true
