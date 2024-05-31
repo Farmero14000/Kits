@@ -41,6 +41,7 @@ class KitsManager {
             return false;
         }
 
+        $currentTime = time();
         $cooldownSeconds = $kit["cooldown"];
         if ($cooldownSeconds > 0 && $this->isOnCooldown($player, $kitName)) {
             return false;
@@ -76,6 +77,35 @@ class KitsManager {
             }
         }
         return false;
+    }
+
+    public function getRemainingCooldown(Player $player, string $kitName): int {
+        $currentTime = time();
+        $cooldownTime = $this->cooldowns[$player->getName()][$kitName];
+        return max(0, $cooldownTime - $currentTime);
+    }
+
+    public function formatCooldownMessage(int $seconds): string {
+        $days = floor($seconds / 86400);
+        $seconds -= $days * 86400;
+        $hours = floor($seconds / 3600);
+        $seconds -= $hours * 3600;
+        $minutes = floor($seconds / 60);
+        $seconds -= $minutes * 60;
+
+        $formatted = '';
+        if ($days > 0) {
+            $formatted .= "$days days ";
+        }
+        if ($hours > 0) {
+            $formatted .= "$hours hours ";
+        }
+        if ($minutes > 0) {
+            $formatted .= "$minutes minutes ";
+        }
+        $formatted .= "$seconds seconds";
+
+        return $formatted;
     }
 
     public function setCooldown(Player $player, string $kitName, int $cooldownSeconds): void {
