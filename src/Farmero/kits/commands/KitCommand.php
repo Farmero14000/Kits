@@ -36,12 +36,25 @@ class KitCommand extends Command {
         }
 
         $kitName = $args[0];
-        if (Kits::getInstance()->getKitsManager()->giveKit($sender, $kitName)) {
-            $sender->sendMessage("You have received the $kitName kit!");
+        if (!Kits::getInstance()->getKitsManager()->giveKit($sender, $kitName)) {
+            $cooldownMessage = $this->getCooldownMessage($sender, $kitName);
+            if ($cooldownMessage !== null) {
+                $sender->sendMessage("Failed to claim $kitName. Cooldown remaining: $cooldownMessage");
+            } else {
+                $sender->sendMessage("Kit $kitName does not exist...");
+            }
         } else {
-            $sender->sendMessage("Kit $kitName does not exist...");
+            $sender->sendMessage("You have received the $kitName kit!");
         }
 
         return true;
+    }
+
+    private function getCooldownMessage(Player $player, string $kitName): ?string {
+        $remainingCooldown = Kits::getInstance()->getKitsManager()->getRemainingCooldown($player, $kitName);
+        if ($remainingCooldown > 0) {
+            return Kits::getInstance()->getKitsManager()->formatCooldownMessage($remainingCooldown);
+        }
+        return null;
     }
 }
