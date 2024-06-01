@@ -17,7 +17,7 @@ class KitCommand extends Command {
 
     public function __construct() {
         parent::__construct("kit", "Claim a kit", "/kit [name]", ["kits"]);
-        $this->setPermission("kits.command.kit");
+        $this->setPermission("kits.cmd.kit");
     }
 
     public function execute(CommandSender $sender, string $label, array $args): bool {
