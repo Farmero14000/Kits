@@ -50,8 +50,7 @@ class KitCommand extends Command {
 
         $kitName = $args[0];
         if (!$kitsManager->kitExists($kitName)) {
-            $displayName = $kitsManager->getKitDisplayName($kitName);
-            $sender->sendMessage(TextFormat::RED . "The kit $displayName does not exist, Try again...");
+            $sender->sendMessage(TextFormat::RED . "The kit $kitName does not exist, Try again...");
             return false;
         }
 
