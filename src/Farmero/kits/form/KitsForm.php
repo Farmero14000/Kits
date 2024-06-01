@@ -17,23 +17,15 @@ class KitsForm {
             if ($data === null) {
                 return;
             }
-
             $kitName = array_keys(Kits::getInstance()->getKitsManager()->getKitsConfig()->getAll())[$data];
-            if (!Kits::getInstance()->getKitsManager()->giveKit($player, $kitName)) {
-                $cooldownMessage = Kits::getInstance()->getKitsManager()->formatCooldownMessage(
-                    Kits::getInstance()->getKitsManager()->getRemainingCooldown($player, $kitName)
-                );
-            }
         });
-
         $form->setTitle("Kits");
         $form->setContent("Select a kit to claim:");
-
         $kitsManager = Kits::getInstance()->getKitsManager();
         foreach ($kitsManager->getKitsConfig()->getAll() as $kitName => $kitData) {
-            $form->addButton($kitName);
+            $displayName = $kitsManager->getKitDisplayName($kitName);
+            $form->addButton($displayName);
         }
-
         $player->sendForm($form);
     }
 }
