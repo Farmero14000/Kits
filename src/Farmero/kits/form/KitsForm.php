@@ -63,7 +63,7 @@ class KitsForm {
 
             $kitsManager = Kits::getInstance()->getKitsManager();
 
-            if (!$kitsManager->kitExists($kitName)) 
+            if (!$kitsManager->kitExists($kitName)) {
                 $player->sendMessage(TextFormat::RED . "The kit $kitName does not exist...");
                 return;
             }
