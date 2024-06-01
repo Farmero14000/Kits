@@ -6,4 +6,4 @@ main: Farmero\kits\Kits
 
 permissions:
   kits.cmd.kit:
-    defualt: true
+    default: true
