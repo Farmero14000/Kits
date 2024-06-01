@@ -10,7 +10,6 @@ use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 
 use Farmero\kits\Kits;
-
 use Farmero\kits\form\KitsForm;
 
 class KitCommand extends Command {
@@ -40,26 +39,34 @@ class KitCommand extends Command {
                 $sender->sendMessage(TextFormat::YELLOW . "Available kits:");
                 foreach ($kitsManager->getKitsConfig()->getAll() as $kitName => $kitData) {
                     $displayName = $kitsManager->getKitDisplayName($kitName);
-                    $sender->sendMessage(TextFormat::GREEN . "- " . $displayName);
+                    $sender->sendMessage(TextFormat::GREEN . $displayName);
                 }
                 return true;
             }
         }
 
         $kitName = $args[0];
-
         if (!$kitsManager->kitExists($kitName)) {
-            $sender->sendMessage(TextFormat::RED . "Kit not found.");
+            $sender->sendMessage(TextFormat::RED . "The kit $kitName does not exist.");
             return false;
         }
 
-        $displayName = $kitsManager->getKitDisplayName($kitName);
+        if (!$kitsManager->hasPermissionForKit($sender, $kitName)) {
+            $sender->sendMessage(TextFormat::RED . "You do not have permission to claim the $kitName kit.");
+            return false;
+        }
+
+        if ($kitsManager->isOnCooldown($sender, $kitName)) {
+            $remainingTime = $kitsManager->getRemainingCooldown($sender, $kitName);
+            $formattedCooldown = $kitsManager->formatCooldownMessage($remainingTime);
+            $sender->sendMessage(TextFormat::RED . "You cannot claim the $kitName kit yet. Cooldown remaining: $formattedCooldown.");
+            return false;
+        }
 
         if ($kitsManager->giveKit($sender, $kitName)) {
-            $sender->sendMessage(TextFormat::GREEN . "You have received the $displayName kit!");
+            $sender->sendMessage(TextFormat::GREEN . "You have claimed the $kitName kit!");
         } else {
-            $cooldownMessage = $kitsManager->formatCooldownMessage($kitsManager->getRemainingCooldown($sender, $kitName));
-            $sender->sendMessage(TextFormat::RED . "Failed to claim $displayName kit. Cooldown remaining: $cooldownMessage");
+            $sender->sendMessage(TextFormat::RED . "Failed to claim the $kitName kit.");
         }
         return true;
     }
