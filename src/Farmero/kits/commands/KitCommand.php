@@ -50,26 +50,30 @@ class KitCommand extends Command {
 
         $kitName = $args[0];
         if (!$kitsManager->kitExists($kitName)) {
-            $sender->sendMessage(TextFormat::RED . "The kit $kitName does not exist.");
+            $displayName = $kitsManager->getKitDisplayName($kitName);
+            $sender->sendMessage(TextFormat::RED . "The kit $displayName does not exist, Try again...");
             return false;
         }
 
         if (!$kitsManager->hasPermissionForKit($sender, $kitName)) {
-            $sender->sendMessage(TextFormat::RED . "You do not have permission to claim the $kitName kit.");
+            $displayName = $kitsManager->getKitDisplayName($kitName);
+            $sender->sendMessage(TextFormat::RED . "You do not have permission to claim the $displayName kit!");
             return false;
         }
 
         if ($kitsManager->isOnCooldown($sender, $kitName)) {
+            $displayName = $kitsManager->getKitDisplayName($kitName);
             $remainingTime = $kitsManager->getRemainingCooldown($sender, $kitName);
             $formattedCooldown = $kitsManager->formatCooldownMessage($remainingTime);
-            $sender->sendMessage(TextFormat::RED . "You cannot claim the $kitName kit yet. Cooldown remaining: $formattedCooldown.");
+            $sender->sendMessage(TextFormat::RED . "You cannot claim the $displayName kit yet... Cooldown remaining: $formattedCooldown");
             return false;
         }
 
         if ($kitsManager->giveKit($sender, $kitName)) {
-            $sender->sendMessage(TextFormat::GREEN . "You have claimed the $kitName kit!");
+            $displayName = $kitsManager->getKitDisplayName($kitName);
+            $sender->sendMessage(TextFormat::GREEN . "You have claimed the $displayName kit!");
         } else {
-            $sender->sendMessage(TextFormat::RED . "Failed to claim the $kitName kit.");
+            $sender->sendMessage(TextFormat::RED . "Failed to claim the $displayName kit...");
         }
         return true;
     }
