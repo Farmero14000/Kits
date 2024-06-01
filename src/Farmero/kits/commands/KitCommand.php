@@ -7,63 +7,60 @@ namespace Farmero\kits\commands;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
+use pocketmine\utils\TextFormat;
 
 use Farmero\kits\Kits;
+
 use Farmero\kits\form\KitsForm;
 
 class KitCommand extends Command {
 
     public function __construct() {
-        parent::__construct("kit");
-        $this->setLabel("kit");
-        $this->setDescription("Claim a kit");
-        $this->setAliases(["k", "kits"]);
-        $this->setPermission("kits.cmd.kit");
+        parent::__construct("kit", "Claim a kit", "/kit [name]", ["kits"]);
+        $this->setPermission("kits.command.kit");
     }
 
     public function execute(CommandSender $sender, string $label, array $args): bool {
         if (!$sender instanceof Player) {
-            $sender->sendMessage("This command can only be used in-game!");
-            return true;
+            $sender->sendMessage(TextFormat::RED . "This command can only be used in-game.");
+            return false;
+        }
+
+        if (!$this->testPermission($sender)) {
+            return false;
         }
 
         $kitsManager = Kits::getInstance()->getKitsManager();
 
-        if (Kits::getInstance()->isUseUI()) {
-            KitsForm::sendKitsForm($sender);
-            return true;
-        } else {
-            if (!isset($args[0])) {
-                $sender->sendMessage("Usage: /kit <kitname>");
+        if (count($args) === 0) {
+            if (Kits::getInstance()->isUseUI()) {
+                KitsForm::sendKitsForm($sender);
                 return true;
-            }
-
-            $kitName = $args[0];
-
-            if (!$kitsManager->kitExists($kitName)) {
-                $sender->sendMessage("Kit $kitName does not exist...");
-                return true;
-            }
-
-            if (!$kitsManager->giveKit($sender, $kitName)) {
-                $cooldownMessage = $this->getCooldownMessage($sender, $kitName);
-                if ($cooldownMessage !== null) {
-                    $sender->sendMessage("Failed to claim $kitName. Cooldown remaining: $cooldownMessage");
-                } else {
-                    $sender->sendMessage("Kit $kitName does not exist...");
-                }
             } else {
-                $sender->sendMessage("You have received the $kitName kit!");
+                $sender->sendMessage(TextFormat::YELLOW . "Available kits:");
+                foreach ($kitsManager->getKitsConfig()->getAll() as $kitName => $kitData) {
+                    $displayName = $kitsManager->getKitDisplayName($kitName);
+                    $sender->sendMessage(TextFormat::GREEN . "- " . $displayName);
+                }
+                return true;
             }
-            return true;
         }
-    }
 
-    private function getCooldownMessage(Player $player, string $kitName): ?string {
-        $remainingCooldown = Kits::getInstance()->getKitsManager()->getRemainingCooldown($player, $kitName);
-        if ($remainingCooldown > 0) {
-            return Kits::getInstance()->getKitsManager()->formatCooldownMessage($remainingCooldown);
+        $kitName = $args[0];
+
+        if (!$kitsManager->kitExists($kitName)) {
+            $sender->sendMessage(TextFormat::RED . "Kit not found.");
+            return false;
         }
-        return null;
+
+        $displayName = $kitsManager->getKitDisplayName($kitName);
+
+        if ($kitsManager->giveKit($sender, $kitName)) {
+            $sender->sendMessage(TextFormat::GREEN . "You have received the $displayName kit!");
+        } else {
+            $cooldownMessage = $kitsManager->formatCooldownMessage($kitsManager->getRemainingCooldown($sender, $kitName));
+            $sender->sendMessage(TextFormat::RED . "Failed to claim $displayName kit. Cooldown remaining: $cooldownMessage");
+        }
+        return true;
     }
 }
