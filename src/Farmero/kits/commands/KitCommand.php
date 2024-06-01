@@ -73,6 +73,7 @@ class KitCommand extends Command {
             $displayName = $kitsManager->getKitDisplayName($kitName);
             $sender->sendMessage(TextFormat::GREEN . "You have claimed the $displayName kit!");
         } else {
+            $displayName = $kitsManager->getKitDisplayName($kitName);
             $sender->sendMessage(TextFormat::RED . "Failed to claim the $displayName kit...");
         }
         return true;
