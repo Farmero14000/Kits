@@ -35,6 +35,10 @@ class KitsManager {
         return $kitData;
     }
 
+    public function kitExists(string $kitName): bool {
+        return $this->kitsConfig->exists($kitName);
+    }
+
     public function giveKit(Player $player, string $kitName): bool {
         $kit = $this->getKit($kitName);
         if ($kit === null) {
