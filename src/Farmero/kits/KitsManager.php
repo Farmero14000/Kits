@@ -42,17 +42,20 @@ class KitsManager {
         return $this->kitsConfig->exists($kitName);
     }
 
+    public function hasPermissionForKit(Player $player, string $kitName): bool {
+        $kit = $this->getKit($kitName);
+        if ($kit !== null) {
+            $permission = $kit["permission"] ?? null;
+            if ($permission !== null) {
+                return $player->hasPermission($permission);
+            }
+        }
+        return true;
+    }
+
     public function giveKit(Player $player, string $kitName): bool {
         $kit = $this->getKit($kitName);
         if ($kit === null) {
-            return false;
-        }
-
-        $currentTime = time();
-        $cooldownSeconds = $kit["cooldown"];
-        if ($cooldownSeconds > 0 && $this->isOnCooldown($player, $kitName)) {
-            $cooldownMessage = $this->formatCooldownMessage($this->getRemainingCooldown($player, $kitName));
-            $player->sendMessage("Failed to claim $kitName. Cooldown remaining: $cooldownMessage");
             return false;
         }
 
@@ -113,10 +116,10 @@ class KitsManager {
             }
         }
 
-        if ($cooldownSeconds > 0) {
-            $this->setCooldown($player, $kitName, $cooldownSeconds);
+        if ($kit["cooldown"] > 0) {
+            $this->setCooldown($player, $kitName, $kit["cooldown"]);
         }
-        $player->sendMessage("You have received the $kitName kit!");
+
         return true;
     }
 
