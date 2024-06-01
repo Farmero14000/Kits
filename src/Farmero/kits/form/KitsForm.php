@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Farmero\kits\form;
 
 use pocketmine\player\Player;
+use pocketmine\utils\TextFormat;
 
 use jojoe77777\FormAPI\SimpleForm;
 
@@ -19,7 +20,29 @@ class KitsForm {
             }
             $kitName = array_keys(Kits::getInstance()->getKitsManager()->getKitsConfig()->getAll())[$data];
             $kitsManager = Kits::getInstance()->getKitsManager();
-            $kitsManager->giveKit($player, $kitName);
+
+            if (!$kitsManager->kitExists($kitName)) {
+                $player->sendMessage(TextFormat::RED . "The kit $kitName does not exist.");
+                return;
+            }
+
+            if (!$kitsManager->hasPermissionForKit($player, $kitName)) {
+                $player->sendMessage(TextFormat::RED . "You do not have permission to claim the $kitName kit.");
+                return;
+            }
+
+            if ($kitsManager->isOnCooldown($player, $kitName)) {
+                $remainingTime = $kitsManager->getRemainingCooldown($player, $kitName);
+                $formattedCooldown = $kitsManager->formatCooldownMessage($remainingTime);
+                $player->sendMessage(TextFormat::RED . "You cannot claim the $kitName kit yet. Cooldown remaining: $formattedCooldown.");
+                return;
+            }
+
+            if ($kitsManager->giveKit($player, $kitName)) {
+                $player->sendMessage(TextFormat::GREEN . "You have claimed the $kitName kit!");
+            } else {
+                $player->sendMessage(TextFormat::RED . "Failed to claim the $kitName kit.");
+            }
         });
         $form->setTitle("Kits");
         $form->setContent("Select a kit to claim:");
