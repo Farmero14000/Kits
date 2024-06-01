@@ -67,13 +67,14 @@ class KitsManager {
 
         if (isset($kit["armor"])) {
             $armorInventory = $player->getArmorInventory();
-            foreach ($kit["armor"] as $armorPiece => $armorData) {
+            foreach ($kit["armor"] as $armorPiece) {
+                $armorData = current($armorPiece);
                 $armorItem = StringToItemParser::getInstance()->parse($armorData["id"]);
                 if ($armorItem !== null) {
                     if (isset($armorData["name"])) {
                         $armorItem->setCustomName($armorData["name"]);
                     }
-                    switch ($armorPiece) {
+                    switch (key($armorPiece)) {
                         case "helmet":
                             if ($armorInventory->getHelmet()->isNull()) {
                                 $armorInventory->setHelmet($armorItem);
@@ -110,7 +111,6 @@ class KitsManager {
         if ($cooldownSeconds > 0) {
             $this->setCooldown($player, $kitName, $cooldownSeconds);
         }
-
         $player->sendMessage("You have received the $kitName kit!");
         return true;
     }
