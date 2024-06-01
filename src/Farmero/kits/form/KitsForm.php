@@ -18,6 +18,8 @@ class KitsForm {
                 return;
             }
             $kitName = array_keys(Kits::getInstance()->getKitsManager()->getKitsConfig()->getAll())[$data];
+            $kitsManager = Kits::getInstance()->getKitsManager();
+            $kitsManager->giveKit($player, $kitName);
         });
         $form->setTitle("Kits");
         $form->setContent("Select a kit to claim:");
