@@ -33,6 +33,11 @@ class KitsManager {
         return $kitData;
     }
 
+    public function getKitDisplayName(string $kitName): string {
+        $kitData = $this->getKit($kitName);
+        return $kitData["kit_display_name"] ?? $kitName;
+    }
+
     public function kitExists(string $kitName): bool {
         return $this->kitsConfig->exists($kitName);
     }
@@ -177,14 +182,14 @@ class KitsManager {
         return $this->kitsConfig;
     }
 
-    private function loadCooldowns(): void {
+    public function loadCooldowns(): void {
         if (file_exists($this->cooldownFile)) {
             $data = file_get_contents($this->cooldownFile);
             $this->cooldowns = json_decode($data, true);
         }
     }
 
-    private function saveCooldowns(): void {
+    public function saveCooldowns(): void {
         $data = json_encode($this->cooldowns, JSON_PRETTY_PRINT);
         file_put_contents($this->cooldownFile, $data);
     }
