@@ -6,8 +6,10 @@ namespace Farmero\kits\form;
 
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
+
 use jojoe77777\FormAPI\SimpleForm;
 use jojoe77777\FormAPI\ModalForm;
+
 use Farmero\kits\Kits;
 
 class KitsForm {
@@ -33,23 +35,24 @@ class KitsForm {
     public static function sendKitConfirmationForm(Player $player, string $kitName): void {
         $kitsManager = Kits::getInstance()->getKitsManager();
         if (!$kitsManager->kitExists($kitName)) {
-            $player->sendMessage(TextFormat::RED . "The kit $kitName does not exist.");
+            $player->sendMessage(TextFormat::RED . "The kit $kitName does not exist...");
             return;
         }
 
         if (!$kitsManager->hasPermissionForKit($player, $kitName)) {
-            $player->sendMessage(TextFormat::RED . "You do not have permission to claim the $kitName kit.");
+            $displayName = $kitsManager->getKitDisplayName($kitName);
+            $player->sendMessage(TextFormat::RED . "You do not have permission to claim the $displayName kit.");
             return;
         }
 
         $cooldownMessage = '';
         if ($kitsManager->isOnCooldown($player, $kitName)) {
             $remainingTime = $kitsManager->getRemainingCooldown($player, $kitName);
-            $cooldownMessage = " Cooldown remaining: " . $kitsManager->formatCooldownMessage($remainingTime) . ".";
+            $cooldownMessage = " Cooldown remaining: " . $kitsManager->formatCooldownMessage($remainingTime);
         } else {
             $kit = $kitsManager->getKit($kitName);
             if (isset($kit["cooldown"]) && $kit["cooldown"] > 0) {
-                $cooldownMessage = " Cooldown: " . $kitsManager->formatCooldownMessage($kit["cooldown"]) . " after claiming.";
+                $cooldownMessage = " Cooldown: " . $kitsManager->formatCooldownMessage($kit["cooldown"]) . " after claiming!";
             }
         }
 
@@ -60,31 +63,34 @@ class KitsForm {
 
             $kitsManager = Kits::getInstance()->getKitsManager();
 
-            if (!$kitsManager->kitExists($kitName)) {
-                $player->sendMessage(TextFormat::RED . "The kit $kitName does not exist.");
+            if (!$kitsManager->kitExists($kitName)) 
+                $player->sendMessage(TextFormat::RED . "The kit $kitName does not exist...");
                 return;
             }
 
             if (!$kitsManager->hasPermissionForKit($player, $kitName)) {
-                $player->sendMessage(TextFormat::RED . "You do not have permission to claim the $kitName kit.");
+                $displayName = $kitsManager->getKitDisplayName($kitName);
+                $player->sendMessage(TextFormat::RED . "You do not have permission to claim the $displayName kit!");
                 return;
             }
 
             if ($kitsManager->isOnCooldown($player, $kitName)) {
                 $remainingTime = $kitsManager->getRemainingCooldown($player, $kitName);
                 $formattedCooldown = $kitsManager->formatCooldownMessage($remainingTime);
-                $player->sendMessage(TextFormat::RED . "You cannot claim the $kitName kit yet. Cooldown remaining: $formattedCooldown.");
+                $displayName = $kitsManager->getKitDisplayName($kitName);
+                $player->sendMessage(TextFormat::RED . "You cannot claim the $displayName kit yet, Cooldown remaining: $formattedCooldown");
                 return;
             }
 
             if ($kitsManager->giveKit($player, $kitName)) {
-                $player->sendMessage(TextFormat::GREEN . "You have claimed the $kitName kit!");
+                $displayName = $kitsManager->getKitDisplayName($kitName);
+                $player->sendMessage(TextFormat::GREEN . "You have claimed the $displayName kit!");
             } else {
                 $player->sendMessage(TextFormat::RED . "Failed to claim the $kitName kit.");
             }
         });
-        $form->setTitle("Confirm Kit Claim");
-        $form->setContent("Do you want to claim the $kitName kit? $cooldownMessage");
+        $form->setTitle("Confirm");
+        $form->setContent("Do you want to claim the $kitName kit? \n $cooldownMessage");
         $form->setButton1("Yes");
         $form->setButton2("No");
         $player->sendForm($form);
