@@ -9,6 +9,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
 
 use Farmero\kits\Kits;
+use Farmero\kits\form\KitsForm;
 
 class KitCommand extends Command {
 
@@ -26,30 +27,36 @@ class KitCommand extends Command {
             return true;
         }
 
-        if (!isset($args[0])) {
-            $sender->sendMessage("Usage: /kit <kitname>");
-            return true;
-        }
-
-        $kitName = $args[0];
         $kitsManager = Kits::getInstance()->getKitsManager();
 
-        if (!$kitsManager->kitExists($kitName)) {
-            $sender->sendMessage("Kit $kitName does not exist...");
+        if (Kits::getInstance()->isUseUI()) {
+            KitsForm::sendKitsForm($sender);
+            return true;
+        } else {
+            if (!isset($args[0])) {
+                $sender->sendMessage("Usage: /kit <kitname>");
+                return true;
+            }
+
+            $kitName = $args[0];
+
+            if (!$kitsManager->kitExists($kitName)) {
+                $sender->sendMessage("Kit $kitName does not exist...");
+                return true;
+            }
+
+            if (!$kitsManager->giveKit($sender, $kitName)) {
+                $cooldownMessage = $this->getCooldownMessage($sender, $kitName);
+                if ($cooldownMessage !== null) {
+                    $sender->sendMessage("Failed to claim $kitName. Cooldown remaining: $cooldownMessage");
+                } else {
+                    $sender->sendMessage("Kit $kitName does not exist...");
+                }
+            } else {
+                $sender->sendMessage("You have received the $kitName kit!");
+            }
             return true;
         }
-
-        if (!$kitsManager->giveKit($sender, $kitName)) {
-            $cooldownMessage = $this->getCooldownMessage($sender, $kitName);
-            if ($cooldownMessage !== null) {
-                $sender->sendMessage("Failed to claim $kitName. Cooldown remaining: $cooldownMessage");
-            } else {
-                $sender->sendMessage("Kit $kitName does not exist...");
-            }
-        } else {
-            $sender->sendMessage("You have received the $kitName kit!");
-        }
-        return true;
     }
 
     private function getCooldownMessage(Player $player, string $kitName): ?string {
