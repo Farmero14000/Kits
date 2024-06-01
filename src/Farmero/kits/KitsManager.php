@@ -7,12 +7,8 @@ namespace Farmero\kits;
 use pocketmine\player\Player;
 use pocketmine\item\StringToItemParser;
 use pocketmine\utils\Config;
-use pocketmine\item\Item;
-use pocketmine\scheduler\Task;
 
 use Farmero\kits\task\KitCooldownTask;
-
-use Farmero\kits\Kits;
 
 class KitsManager {
 
@@ -48,6 +44,8 @@ class KitsManager {
         $currentTime = time();
         $cooldownSeconds = $kit["cooldown"];
         if ($cooldownSeconds > 0 && $this->isOnCooldown($player, $kitName)) {
+            $cooldownMessage = $this->formatCooldownMessage($this->getRemainingCooldown($player, $kitName));
+            $player->sendMessage("Failed to claim $kitName. Cooldown remaining: $cooldownMessage");
             return false;
         }
 
@@ -111,6 +109,7 @@ class KitsManager {
             $this->setCooldown($player, $kitName, $cooldownSeconds);
         }
 
+        $player->sendMessage("You have received the $kitName kit!");
         return true;
     }
 
@@ -170,6 +169,10 @@ class KitsManager {
 
     public function getCooldowns(): array {
         return $this->cooldowns;
+    }
+
+    public function getKitsConfig(): Config {
+        return $this->kitsConfig;
     }
 
     private function loadCooldowns(): void {
