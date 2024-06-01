@@ -15,7 +15,10 @@ use Farmero\kits\form\KitsForm;
 class KitCommand extends Command {
 
     public function __construct() {
-        parent::__construct("kit", "Claim a kit", "/kit [name]", ["kits"]);
+        parent::__construct(Kits::getInstance()->getConfig()->get("command_label"));
+        $this->setLabel(Kits::getInstance()->getConfig()->get("command_label");
+        $this->setDescription(Kits::getInstance()->getConfig()->get("command_description");
+        $this->setAliases(Kits::getInstance()->getConfig()->get("command_aliases");
         $this->setPermission("kits.cmd.kit");
     }
 
