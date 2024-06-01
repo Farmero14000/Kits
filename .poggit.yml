@@ -1,4 +1,4 @@
---- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/Farmero1400/Kits
+--- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/Farmero14000/Kits
 build-by-default: true
 branches:
 - main
