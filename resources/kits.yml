@@ -1,5 +1,18 @@
 starter:
   cooldown: 3600
+  armor:
+    - helmet:
+        id: "diamond_helmet"
+        name: "Starter Helmet"
+    - chestplate:
+        id: "diamond_chestplate"
+        name: "Starter Chestplate"
+    - leggings:
+        id: "diamond_leggings"
+        name: "Starter Leggings"
+    - boots:
+        id: "diamond_boots"
+        name: "Starter Boots"
   items:
     - id: "iron_sword"
       count: 1
@@ -9,6 +22,19 @@ starter:
 
 vip:
   cooldown: 7200
+  armor:
+    - helmet:
+        id: "diamond_helmet"
+        name: "VIP Helmet"
+    - chestplate:
+        id: "diamond_chestplate"
+        name: "VIP Chestplate"
+    - leggings:
+        id: "diamond_leggings"
+        name: "VIP Leggings"
+    - boots:
+        id: "diamond_boots"
+        name: "VIP Boots"
   items:
     - id: "diamond_sword"
       count: 1
