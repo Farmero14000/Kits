@@ -1,4 +1,5 @@
 starter:
+  kit_display_name: “Starter”
   cooldown: 3600
   armor:
     - helmet:
@@ -21,6 +22,7 @@ starter:
       count: 5
 
 vip:
+  kit_display_name: “VIP”
   cooldown: 7200
   armor:
     - helmet:
