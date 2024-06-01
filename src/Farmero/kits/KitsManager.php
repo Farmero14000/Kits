@@ -65,6 +65,48 @@ class KitsManager {
             }
         }
 
+        if (isset($kit["armor"])) {
+            $armorInventory = $player->getArmorInventory();
+            foreach ($kit["armor"] as $armorPiece => $armorData) {
+                $armorItem = StringToItemParser::getInstance()->parse($armorData["id"]);
+                if ($armorItem !== null) {
+                    if (isset($armorData["name"])) {
+                        $armorItem->setCustomName($armorData["name"]);
+                    }
+                    switch ($armorPiece) {
+                        case "helmet":
+                            if ($armorInventory->getHelmet()->isNull()) {
+                                $armorInventory->setHelmet($armorItem);
+                            } else {
+                                $player->getInventory()->addItem($armorItem);
+                            }
+                            break;
+                        case "chestplate":
+                            if ($armorInventory->getChestplate()->isNull()) {
+                                $armorInventory->setChestplate($armorItem);
+                            } else {
+                                $player->getInventory()->addItem($armorItem);
+                            }
+                            break;
+                        case "leggings":
+                            if ($armorInventory->getLeggings()->isNull()) {
+                                $armorInventory->setLeggings($armorItem);
+                            } else {
+                                $player->getInventory()->addItem($armorItem);
+                            }
+                            break;
+                        case "boots":
+                            if ($armorInventory->getBoots()->isNull()) {
+                                $armorInventory->setBoots($armorItem);
+                            } else {
+                                $player->getInventory()->addItem($armorItem);
+                            }
+                            break;
+                    }
+                }
+            }
+        }
+
         if ($cooldownSeconds > 0) {
             $this->setCooldown($player, $kitName, $cooldownSeconds);
         }
