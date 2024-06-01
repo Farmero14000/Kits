@@ -32,7 +32,14 @@ class KitCommand extends Command {
         }
 
         $kitName = $args[0];
-        if (!Kits::getInstance()->getKitsManager()->giveKit($sender, $kitName)) {
+        $kitsManager = Kits::getInstance()->getKitsManager();
+
+        if (!$kitsManager->kitExists($kitName)) {
+            $sender->sendMessage("Kit $kitName does not exist...");
+            return true;
+        }
+
+        if (!$kitsManager->giveKit($sender, $kitName)) {
             $cooldownMessage = $this->getCooldownMessage($sender, $kitName);
             if ($cooldownMessage !== null) {
                 $sender->sendMessage("Failed to claim $kitName. Cooldown remaining: $cooldownMessage");
@@ -42,7 +49,6 @@ class KitCommand extends Command {
         } else {
             $sender->sendMessage("You have received the $kitName kit!");
         }
-
         return true;
     }
 
