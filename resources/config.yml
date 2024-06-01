@@ -1,1 +1,13 @@
+# Customizable Command
+# Command Name
+command_label: "kit"
+# Command Description
+command_description: "Claim a kit"
+# Command Alises
+command_aliases: []
+
+# Enable UI usage
+# true = UI will pop up when you run the command /kit
+# false = UI will not pop up and instead you'll have to type the kit name as well 
+# Example: /kit starter (only if setting is set to false)
 use-ui: true
