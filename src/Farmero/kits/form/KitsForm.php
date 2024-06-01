@@ -23,9 +23,6 @@ class KitsForm {
                 $cooldownMessage = Kits::getInstance()->getKitsManager()->formatCooldownMessage(
                     Kits::getInstance()->getKitsManager()->getRemainingCooldown($player, $kitName)
                 );
-                $player->sendMessage("Failed to claim $kitName. Cooldown remaining: $cooldownMessage");
-            } else {
-                $player->sendMessage("You have received the $kitName kit!");
             }
         });
 
