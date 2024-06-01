@@ -1,4 +1,5 @@
 starter:
+  permission: "kits.kit.starter"
   kit_display_name: “Starter”
   cooldown: 3600
   armor:
@@ -22,6 +23,7 @@ starter:
       count: 5
 
 vip:
+  permission: "kits.kit.vip"
   kit_display_name: “VIP”
   cooldown: 7200
   armor:
