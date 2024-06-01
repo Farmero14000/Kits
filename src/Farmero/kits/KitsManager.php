@@ -10,6 +10,8 @@ use pocketmine\utils\Config;
 
 use Farmero\kits\task\KitCooldownTask;
 
+use Farmero\kits\Kits;
+
 class KitsManager {
 
     private Config $kitsConfig;
