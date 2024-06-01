@@ -59,7 +59,7 @@ class KitsManager {
                     $item->setCustomName($itemData["name"]);
                 }
                 if (isset($itemData["lore"])) {
-                    $item->setLore($itemData["lore"]);
+                    $item->setLore(explode("\n", $itemData["lore"]));
                 }
                 $player->getInventory()->addItem($item);
             }
