@@ -6,9 +6,8 @@ namespace Farmero\kits\form;
 
 use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
-
 use jojoe77777\FormAPI\SimpleForm;
-
+use jojoe77777\FormAPI\ModalForm;
 use Farmero\kits\Kits;
 
 class KitsForm {
@@ -19,6 +18,46 @@ class KitsForm {
                 return;
             }
             $kitName = array_keys(Kits::getInstance()->getKitsManager()->getKitsConfig()->getAll())[$data];
+            self::sendKitConfirmationForm($player, $kitName);
+        });
+        $form->setTitle("Kits");
+        $form->setContent("Select a kit to claim:");
+        $kitsManager = Kits::getInstance()->getKitsManager();
+        foreach ($kitsManager->getKitsConfig()->getAll() as $kitName => $kitData) {
+            $displayName = $kitsManager->getKitDisplayName($kitName);
+            $form->addButton($displayName);
+        }
+        $player->sendForm($form);
+    }
+
+    public static function sendKitConfirmationForm(Player $player, string $kitName): void {
+        $kitsManager = Kits::getInstance()->getKitsManager();
+        if (!$kitsManager->kitExists($kitName)) {
+            $player->sendMessage(TextFormat::RED . "The kit $kitName does not exist.");
+            return;
+        }
+
+        if (!$kitsManager->hasPermissionForKit($player, $kitName)) {
+            $player->sendMessage(TextFormat::RED . "You do not have permission to claim the $kitName kit.");
+            return;
+        }
+
+        $cooldownMessage = '';
+        if ($kitsManager->isOnCooldown($player, $kitName)) {
+            $remainingTime = $kitsManager->getRemainingCooldown($player, $kitName);
+            $cooldownMessage = " Cooldown remaining: " . $kitsManager->formatCooldownMessage($remainingTime) . ".";
+        } else {
+            $kit = $kitsManager->getKit($kitName);
+            if (isset($kit["cooldown"]) && $kit["cooldown"] > 0) {
+                $cooldownMessage = " Cooldown: " . $kitsManager->formatCooldownMessage($kit["cooldown"]) . " after claiming.";
+            }
+        }
+
+        $form = new ModalForm(function (Player $player, ?bool $data) use ($kitName) {
+            if ($data === null || $data === false) {
+                return;
+            }
+
             $kitsManager = Kits::getInstance()->getKitsManager();
 
             if (!$kitsManager->kitExists($kitName)) {
@@ -44,13 +83,10 @@ class KitsForm {
                 $player->sendMessage(TextFormat::RED . "Failed to claim the $kitName kit.");
             }
         });
-        $form->setTitle("Kits");
-        $form->setContent("Select a kit to claim:");
-        $kitsManager = Kits::getInstance()->getKitsManager();
-        foreach ($kitsManager->getKitsConfig()->getAll() as $kitName => $kitData) {
-            $displayName = $kitsManager->getKitDisplayName($kitName);
-            $form->addButton($displayName);
-        }
+        $form->setTitle("Confirm Kit Claim");
+        $form->setContent("Do you want to claim the $kitName kit? $cooldownMessage");
+        $form->setButton1("Yes");
+        $form->setButton2("No");
         $player->sendForm($form);
     }
 }
